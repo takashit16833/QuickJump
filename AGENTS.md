@@ -6,9 +6,11 @@ QuickJump is a deliberately small VS Code extension for keyboard-driven cursor j
 
 The project exists because existing jump extensions either did not match the desired interaction model or were unreliable in the target environment. Do not turn QuickJump into a general navigation, search, or symbol-browsing extension.
 
+Current release contract: **v1.0.0**.
+
 ## Product Contract
 
-The MVP has two user-facing commands:
+QuickJump has two user-facing commands:
 
 1. one-character search;
 2. two-character search.
@@ -32,7 +34,7 @@ Status-bar text is user-facing and must be English.
 
 ## Scope
 
-### MVP includes
+### v1.0 includes
 
 - all `vscode.window.visibleTextEditors`;
 - only vertically visible ranges of each editor;
@@ -49,7 +51,7 @@ Status-bar text is user-facing and must be English.
 - silent zero-match exit;
 - cancellation when the editor context changes in a way that invalidates candidates.
 
-### Explicit non-goals for MVP
+### Explicit non-goals for v1.0
 
 - searching hidden parts of a document;
 - project-wide search;
@@ -61,13 +63,13 @@ Status-bar text is user-facing and must be English.
 
 ## Known VS Code API Constraints
 
-`TextEditor.visibleRanges` describes vertical visibility only. It explicitly does not account for horizontal scrolling. Therefore the MVP can reliably restrict candidates to visible **lines**, but cannot determine whether an individual character on such a line is horizontally clipped.
+`TextEditor.visibleRanges` describes vertical visibility only. It explicitly does not account for horizontal scrolling. Therefore QuickJump can reliably restrict candidates to visible **lines**, but cannot determine whether an individual character on such a line is horizontally clipped.
 
 Treat this as a platform limitation, not as a reason to add private or unsupported VS Code APIs.
 
 `TextEditorRevealType` has no arbitrary fractional viewport placement. Percentage positioning must therefore be implemented approximately: calculate the source line that should become the viewport top and reveal that line with `AtTop`.
 
-Folding, line wrapping, and document boundaries mean `0..100` is a semantic target rather than a pixel-perfect guarantee.
+Folding, line wrapping, Sticky Scroll, and document boundaries mean `0..100` is a semantic target rather than a pixel-perfect guarantee.
 
 ## Input Capture
 
@@ -130,7 +132,7 @@ When case sensitivity is disabled, normalize only for comparison. Preserve the o
 
 Ordering is part of UX, not an incidental implementation detail.
 
-MVP ordering:
+v1.0 ordering:
 
 1. active editor before other visible editors;
 2. within the active editor, nearest candidates to its current cursor first;
@@ -198,11 +200,11 @@ The item exists only while a QuickJump session is active.
 `quickJump.revealMode = "position"` uses `quickJump.revealPosition`, a number from `0` to `100`:
 
 ```text
-0   = top
-25  = upper quarter
-50  = center
-75  = lower quarter
-100 = bottom
+0   = near top
+25  = near upper quarter
+50  = near center
+75  = near lower quarter
+100 = near bottom
 ```
 
 The core calculation should remain pure. For a visible line count `n`, map the percentage to an offset in `0..n-1`, subtract it from the destination line, and clamp at the beginning of the document.
@@ -257,7 +259,7 @@ VS Code state -> plain data -> pure transformation -> VS Code adapter applies ef
 
 ## Configuration
 
-MVP settings:
+v1.0 settings:
 
 - `quickJump.matchMode`: `wordStart` | `anywhere`, default `wordStart`;
 - `quickJump.caseSensitive`: boolean, default `false`;
