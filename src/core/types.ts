@@ -1,6 +1,11 @@
 export type MatchMode = 'wordStart' | 'anywhere';
 
-export type RevealMode = 'keep' | 'center' | 'upperThird';
+export type RevealMode = 'keep' | 'position';
+
+export interface RevealOptions {
+  readonly mode: RevealMode;
+  readonly position: number;
+}
 
 export interface MatchOptions {
   readonly mode: MatchMode;

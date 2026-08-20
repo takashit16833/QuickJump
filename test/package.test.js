@@ -30,3 +30,13 @@ test('hint colors are contributed for theme customization', () => {
   assert.equal(colorIds.has('quickJump.hintBackground'), true);
   assert.equal(colorIds.has('quickJump.hintForeground'), true);
 });
+
+test('reveal position settings support a 0 to 100 percentage', () => {
+  const properties = manifest.contributes.configuration.properties;
+  assert.deepEqual(properties['quickJump.revealMode'].enum, ['keep', 'position']);
+  assert.equal(properties['quickJump.revealMode'].default, 'keep');
+  assert.equal(properties['quickJump.revealPosition'].minimum, 0);
+  assert.equal(properties['quickJump.revealPosition'].maximum, 100);
+  assert.equal(properties['quickJump.revealPosition'].default, 25);
+  assert.equal(properties['quickJump.reveal'], undefined);
+});

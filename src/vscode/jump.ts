@@ -1,26 +1,26 @@
 import * as vscode from 'vscode';
-import type { Candidate, RevealMode } from '../core/types';
+import { revealTopLine } from '../core/reveal';
+import type { Candidate, RevealOptions } from '../core/types';
 
-const UPPER_THIRD_VISIBLE_OFFSET = 0.22;
+const visibleLineCount = (editor: vscode.TextEditor): number => Math.max(
+  1,
+  editor.visibleRanges.reduce(
+    (count, range) => count + Math.max(1, range.end.line - range.start.line + 1),
+    0,
+  ),
+);
 
-const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Position): void => {
-  const visibleRanges = editor.visibleRanges;
-  if (visibleRanges.length === 0) {
+const revealAtPosition = (
+  editor: vscode.TextEditor,
+  destination: vscode.Position,
+  position: number,
+): void => {
+  if (editor.visibleRanges.length === 0) {
     editor.revealRange(new vscode.Range(destination, destination), vscode.TextEditorRevealType.InCenter);
     return;
   }
 
-  const visibleLineCount = Math.max(
-    1,
-    visibleRanges.reduce(
-      (count, range) => count + Math.max(1, range.end.line - range.start.line + 1),
-      0,
-    ),
-  );
-  const topLine = Math.max(
-    0,
-    destination.line - Math.floor(visibleLineCount * UPPER_THIRD_VISIBLE_OFFSET),
-  );
+  const topLine = revealTopLine(destination.line, visibleLineCount(editor), position);
   const top = new vscode.Position(topLine, 0);
   editor.revealRange(new vscode.Range(top, top), vscode.TextEditorRevealType.AtTop);
 };
@@ -28,7 +28,7 @@ const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Positio
 export const jumpToCandidate = async (
   editors: readonly vscode.TextEditor[],
   candidate: Candidate,
-  reveal: RevealMode,
+  reveal: RevealOptions,
 ): Promise<void> => {
   const target = editors[candidate.editorIndex];
   if (!target) {
@@ -44,16 +44,10 @@ export const jumpToCandidate = async (
   editor.selection = new vscode.Selection(destination, destination);
   const destinationRange = new vscode.Range(destination, destination);
 
-  switch (reveal) {
-    case 'center':
-      editor.revealRange(destinationRange, vscode.TextEditorRevealType.InCenter);
-      break;
-    case 'upperThird':
-      revealUpperThird(editor, destination);
-      break;
-    case 'keep':
-    default:
-      editor.revealRange(destinationRange, vscode.TextEditorRevealType.Default);
-      break;
+  if (reveal.mode === 'position') {
+    revealAtPosition(editor, destination, reveal.position);
+    return;
   }
+
+  editor.revealRange(destinationRange, vscode.TextEditorRevealType.Default);
 };

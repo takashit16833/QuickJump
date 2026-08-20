@@ -95,13 +95,44 @@ The status-bar item disappears when the jump finishes or is cancelled.
 
 ## Jump Reveal Position
 
-`quickJump.reveal` controls where the destination appears after a jump:
+`quickJump.revealMode` controls how the destination is revealed:
 
 - `keep` — keep the current viewport when possible. This is the default.
-- `center` — reveal the destination near the center.
-- `upperThird` — reveal the destination roughly one third from the top, leaving more code visible below it.
+- `position` — place the destination at the percentage configured by `quickJump.revealPosition`.
 
-`upperThird` is intentionally approximate because folding and line wrapping affect the visual position of a source line.
+`quickJump.revealPosition` accepts any number from `0` to `100`:
+
+```text
+0   -> top
+25  -> upper quarter
+50  -> center
+75  -> lower quarter
+100 -> bottom
+```
+
+For example:
+
+```json
+{
+  "quickJump.revealMode": "position",
+  "quickJump.revealPosition": 25
+}
+```
+
+The position is approximate because folding, line wrapping, and document boundaries affect where a source line can be displayed.
+
+## Hint Colors
+
+QuickJump exposes theme colors for hint labels. Customize them with normal VS Code color customization:
+
+```json
+{
+  "workbench.colorCustomizations": {
+    "quickJump.hintBackground": "#FFD700",
+    "quickJump.hintForeground": "#0E1117"
+  }
+}
+```
 
 ## Cancellation
 
@@ -119,7 +150,8 @@ No notification is shown for a normal cancellation or a zero-match result.
 | `quickJump.matchMode` | `wordStart` | `wordStart`, `anywhere` |
 | `quickJump.caseSensitive` | `false` | `true`, `false` |
 | `quickJump.hintCharacters` | `asdfghjkl` | string |
-| `quickJump.reveal` | `keep` | `keep`, `center`, `upperThird` |
+| `quickJump.revealMode` | `keep` | `keep`, `position` |
+| `quickJump.revealPosition` | `25` | number from `0` to `100` |
 
 ## Known Limitation
 

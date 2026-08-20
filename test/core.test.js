@@ -10,6 +10,7 @@ const {
   normalizeHintCharacters,
 } = require('../out/core/hints');
 const { orderCandidates } = require('../out/core/order');
+const { normalizeRevealPosition, revealTopLine } = require('../out/core/reveal');
 
 const separators = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
 
@@ -71,4 +72,16 @@ test('active editor and cursor-near candidates are prioritized', () => {
   ];
   const ordered = orderCandidates(candidates);
   assert.deepEqual(ordered.map(({ editorIndex, line }) => [editorIndex, line]), [[0, 11], [0, 20], [1, 1]]);
+});
+
+test('reveal position maps 0, 50, and 100 to top, middle, and bottom', () => {
+  assert.equal(revealTopLine(100, 41, 0), 100);
+  assert.equal(revealTopLine(100, 41, 50), 80);
+  assert.equal(revealTopLine(100, 41, 100), 60);
+});
+
+test('reveal position clamps invalid percentages', () => {
+  assert.equal(normalizeRevealPosition(-10), 0);
+  assert.equal(normalizeRevealPosition(120), 100);
+  assert.equal(normalizeRevealPosition(Number.NaN), 25);
 });

@@ -28,8 +28,8 @@
         "id": "quickJump.hintBackground",
         "description": "Background color of QuickJump hint labels.",
         "defaults": {
-          "dark": "editorWarning.foreground",
-          "light": "editorWarning.foreground",
+          "dark": "#FFD700",
+          "light": "#FFD700",
           "highContrast": "#FFFF00",
           "highContrastLight": "#B58900"
         }
@@ -38,8 +38,8 @@
         "id": "quickJump.hintForeground",
         "description": "Foreground color of QuickJump hint labels.",
         "defaults": {
-          "dark": "editor.background",
-          "light": "editor.foreground",
+          "dark": "#0E1117",
+          "light": "#0E1117",
           "highContrast": "#000000",
           "highContrastLight": "#000000"
         }
@@ -686,20 +686,25 @@
           "minLength": 2,
           "description": "Characters used to generate jump hints, in priority order."
         },
-        "quickJump.reveal": {
+        "quickJump.revealMode": {
           "type": "string",
           "enum": [
             "keep",
-            "center",
-            "upperThird"
+            "position"
           ],
           "enumDescriptions": [
             "Keep the current viewport when possible.",
-            "Reveal the destination near the center of the editor.",
-            "Reveal the destination roughly one third from the top."
+            "Place the destination at the percentage configured by QuickJump: Reveal Position."
           ],
           "default": "keep",
-          "description": "Controls where the destination appears after a jump."
+          "description": "Controls whether QuickJump keeps the viewport or places the destination at a configured vertical position."
+        },
+        "quickJump.revealPosition": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 25,
+          "description": "Vertical destination position when QuickJump: Reveal Mode is position. 0 is top, 50 is center, and 100 is bottom."
         }
       }
     }
