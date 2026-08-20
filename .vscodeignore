@@ -1,7 +1,7 @@
 .vscode/**
 src/**
+test/**
 tsconfig.json
 AGENTS.md
 .gitignore
-node_modules/**
-*.map
+node_modules/**/.cache/**

@@ -68,17 +68,19 @@ Treat this as a platform limitation, not as a reason to add private or unsupport
 
 ## Input Capture
 
-Use public VS Code command APIs only.
+Use public VS Code keybinding and command APIs only.
 
-The preferred approach is the same pattern demonstrated by Microsoft's official Vim extension sample:
+Do **not** register the built-in `type` command. VS Code keeps extension-host command IDs in one registry and rejects duplicate registrations. Modal editor extensions such as VSCodeVim also register `type`, so overriding it would either fail or make QuickJump incompatible with the user's editor.
 
-- register the built-in `type` command;
-- when QuickJump is inactive, forward input unchanged to `default:type`;
-- when QuickJump is active, consume typed text as QuickJump input instead of editing the document.
+Instead:
 
-Do not install a webview or Quick Pick merely to capture input. The editor should remain visually stable.
+- set the `quickJump.active` context key only while a session is active;
+- contribute character keybindings guarded by `quickJump.active && editorTextFocus`;
+- route those bindings to the internal `quickJump.input` command with the typed character in `args.text`;
+- bind `Esc` to `quickJump.cancel` and `Backspace` to `quickJump.backspace` under the same context;
+- keep normal typing completely untouched while QuickJump is inactive.
 
-IME/composition input must not be guessed at. When implementing non-Latin input, verify actual VS Code `type`, `compositionStart`, `compositionEnd`, and `replacePreviousChar` behavior first.
+The built-in bindings cover Latin letters, uppercase Latin letters via Shift, digits, space, and common unshifted punctuation. This covers the default hint alphabet and user alphabets such as `otaniseh`. Do not claim arbitrary IME/composition support unless it is implemented through a public API without taking over global typing.
 
 ## Cancellation Model
 
@@ -221,26 +223,26 @@ Clamp calculations at document boundaries. Do not promise pixel-perfect one-thir
 
 Prefer a functional core with a thin VS Code shell.
 
-Target structure as the implementation grows:
+Current structure:
 
 ```text
 src/
-  extension.ts          # composition root; command registration only
+  extension.ts          # composition root; command registration and cancellation hooks
+  controller.ts         # small session state machine and effect coordination
   core/
     match.ts            # pure matching
     hints.ts            # pure hint generation/filtering
     order.ts            # pure candidate ordering
-    session.ts          # pure state transitions
     types.ts            # domain types
   vscode/
-    input.ts            # `type` interception / pass-through
     candidates.ts       # visible editor/range -> domain candidates
     decorations.ts      # hint rendering
     statusBar.ts        # status-bar adapter
     jump.ts             # focus, selection, reveal
-    cancellation.ts     # VS Code event subscriptions
     config.ts           # configuration adapter
 ```
+
+Input capture is intentionally declared in `package.json` as context-gated keybindings rather than implemented through a `type` interception module. Keep that constraint unless VS Code gains a public API that can capture transient typed input without conflicting with other extensions.
 
 Do not create abstractions only because this document names them. Add modules when there is real logic to place in them.
 
@@ -287,80 +289,25 @@ Default keys:
 
 These defaults are intentionally ordinary and replaceable. User-specific layouts such as `F13` belong in user/dotfiles configuration, not in the extension's defaults.
 
-## MVP Implementation Plan
+## MVP Implementation Status
 
-Implement in thin, testable slices.
+The MVP is implemented as the following slices:
 
-### 1. Input/session proof
+1. session lifecycle, status bar, `Esc`, and `Backspace`;
+2. pure `wordStart` / `anywhere` matching;
+3. visible-editor / visible-line candidate collection;
+4. deterministic candidate ordering;
+5. fixed-width hint generation and prefix filtering;
+6. theme-aware hint decorations at the match start;
+7. focus, cursor movement, and `keep` / `center` / `upperThird` reveal behavior;
+8. cancellation and cleanup on editor-context changes;
+9. unit tests for matching, hints, ordering, and input-manifest invariants.
 
-- add explicit session states;
-- intercept `type` and pass through to `default:type` while inactive;
-- collect exactly one or two search characters depending on command;
-- implement `Esc` and `Backspace`;
-- show/hide the English status-bar item;
-- verify normal typing is unchanged when QuickJump is inactive.
+The remaining release gate is manual Extension Development Host verification, especially visual decoration behavior and coexistence with VSCodeVim.
 
-Do not search or render hints yet.
+### Manual verification matrix
 
-### 2. Pure matching
-
-- represent visible text/ranges as plain test inputs;
-- implement `wordStart`;
-- implement `anywhere`;
-- implement case-sensitive and case-insensitive comparison;
-- test punctuation, snake_case, camelCase, repeated matches, and Unicode text.
-
-### 3. Visible-editor candidate collection
-
-- read `window.visibleTextEditors`;
-- read each editor's vertically `visibleRanges`;
-- preserve distinct editor instances even when documents are equal;
-- convert VS Code values into domain candidates;
-- verify folded and wrapped-line behavior manually.
-
-### 4. Ordering
-
-- rank active-editor candidates first;
-- rank candidates near the cursor predictably;
-- make ordering deterministic across other visible editors;
-- test ordering as pure data.
-
-### 5. Hint generation
-
-- normalize configured hint characters;
-- choose minimal fixed width;
-- generate labels deterministically;
-- filter candidates as hint input is typed;
-- ignore invalid hint input;
-- jump immediately when candidate count is one.
-
-### 6. Hint rendering proof
-
-- render one hint at a match start;
-- verify dark/light themes;
-- verify the label visually covers the original first character without modifying text;
-- then generalize to multiple editors and candidates.
-
-### 7. Jump and reveal
-
-- focus the target editor;
-- move its primary selection/cursor;
-- implement `keep`;
-- implement `center`;
-- implement approximate `upperThird`;
-- verify the same document open in multiple groups.
-
-### 8. Cancellation and cleanup
-
-- cancel on relevant editor/selection/visible-range/document changes;
-- clear all decorations;
-- hide the status-bar item;
-- restore all context/session state;
-- ensure repeated start/cancel cycles leave no stale listeners or decorations.
-
-### 9. Integration tests and manual matrix
-
-At minimum manually verify:
+Verify at minimum:
 
 - one editor;
 - horizontal and vertical split editors;
@@ -372,12 +319,13 @@ At minimum manually verify:
 - folded code;
 - long horizontally scrolled lines (known API limitation);
 - `Esc` and `Backspace` at every session stage;
-- normal typing before and after a QuickJump session.
+- normal typing before and after a QuickJump session;
+- VSCodeVim enabled while QuickJump is inactive and active.
 
 ## README vs AGENTS.md
 
 README is for users: what QuickJump does, commands, settings, and usage.
 
-AGENTS.md is for maintainers and AI assistants: intent, constraints, architecture, tradeoffs, and implementation plan.
+AGENTS.md is for maintainers and AI assistants: intent, constraints, architecture, tradeoffs, and implementation status.
 
 Keep development philosophy out of README unless it directly helps a user operate the extension.
