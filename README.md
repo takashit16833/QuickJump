@@ -199,3 +199,7 @@ npm run package
 ```
 
 See [AGENTS.md](./AGENTS.md) for architecture, implementation rules, design constraints, and the manual verification matrix.
+
+## License
+
+QuickJump is released under the [MIT License](./LICENSE).
