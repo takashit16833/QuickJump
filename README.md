@@ -159,6 +159,22 @@ Hint colors are configured through `workbench.colorCustomizations` using `quickJ
 
 VS Code exposes visible ranges vertically, not horizontally. QuickJump therefore guarantees that candidates are on currently visible **lines**, but it cannot determine whether a character on a very long line is clipped by horizontal scrolling.
 
+## Installation
+
+QuickJump can be installed locally as a VSIX package. From the repository root:
+
+```sh
+npm install
+npm run package
+code --install-extension quickjump-1.0.0.vsix
+```
+
+`npm run package` runs the compile/test checks and then creates the VSIX file. The generated `*.vsix` file is ignored by Git.
+
+You can also install the generated file from VS Code: open the Extensions view, choose **...** → **Install from VSIX...**, and select `quickjump-1.0.0.vsix`.
+
+After installing or updating the VSIX, reload VS Code if QuickJump is not immediately available.
+
 ## Development
 
 Requirements:
@@ -175,5 +191,11 @@ npm run check
 ```
 
 Press `F5` in VS Code to launch an Extension Development Host for manual testing.
+
+To build an installable VSIX after the checks pass:
+
+```sh
+npm run package
+```
 
 See [AGENTS.md](./AGENTS.md) for architecture, implementation rules, design constraints, and the manual verification matrix.

@@ -40,3 +40,11 @@ test('reveal position settings support a 0 to 100 percentage', () => {
   assert.equal(properties['quickJump.revealPosition'].default, 25);
   assert.equal(properties['quickJump.reveal'], undefined);
 });
+
+test('manifest is ready for local VSIX packaging', () => {
+  assert.equal(manifest.publisher, 'takashit16833');
+  assert.equal(manifest.version, '1.0.0');
+  assert.match(manifest.scripts.package, /npm run check/);
+  assert.match(manifest.scripts.package, /vsce package/);
+  assert.equal(manifest.devDependencies['@vscode/vsce'], '^3.9.2');
+});
