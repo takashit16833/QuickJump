@@ -20,7 +20,7 @@ If exactly one match exists, QuickJump jumps immediately. If multiple matches ex
 | Command | Default |
 | --- | --- |
 | Jump by 1 Character | `Ctrl+;` |
-| Jump by 2 Characters | `Ctrl+Shift+;` |
+| Jump by 2 Characters | `Ctrl+Alt+;` |
 
 These are ordinary VS Code keybindings and can be replaced in Keyboard Shortcuts or `keybindings.json`.
 

@@ -31,7 +31,7 @@
       },
       {
         "command": "quickJump.jumpTwoCharacters",
-        "key": "ctrl+shift+;",
+        "key": "ctrl+alt+;",
         "when": "editorTextFocus && !quickJump.active"
       },
       {
@@ -48,593 +48,445 @@
         "command": "quickJump.input",
         "key": "a",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "a"
-        }
+        "args": { "text": "a" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+a",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "A"
-        }
+        "args": { "text": "A" }
       },
       {
         "command": "quickJump.input",
         "key": "b",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "b"
-        }
+        "args": { "text": "b" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+b",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "B"
-        }
+        "args": { "text": "B" }
       },
       {
         "command": "quickJump.input",
         "key": "c",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "c"
-        }
+        "args": { "text": "c" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+c",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "C"
-        }
+        "args": { "text": "C" }
       },
       {
         "command": "quickJump.input",
         "key": "d",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "d"
-        }
+        "args": { "text": "d" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+d",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "D"
-        }
+        "args": { "text": "D" }
       },
       {
         "command": "quickJump.input",
         "key": "e",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "e"
-        }
+        "args": { "text": "e" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+e",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "E"
-        }
+        "args": { "text": "E" }
       },
       {
         "command": "quickJump.input",
         "key": "f",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "f"
-        }
+        "args": { "text": "f" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+f",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "F"
-        }
+        "args": { "text": "F" }
       },
       {
         "command": "quickJump.input",
         "key": "g",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "g"
-        }
+        "args": { "text": "g" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+g",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "G"
-        }
+        "args": { "text": "G" }
       },
       {
         "command": "quickJump.input",
         "key": "h",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "h"
-        }
+        "args": { "text": "h" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+h",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "H"
-        }
+        "args": { "text": "H" }
       },
       {
         "command": "quickJump.input",
         "key": "i",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "i"
-        }
+        "args": { "text": "i" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+i",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "I"
-        }
+        "args": { "text": "I" }
       },
       {
         "command": "quickJump.input",
         "key": "j",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "j"
-        }
+        "args": { "text": "j" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+j",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "J"
-        }
+        "args": { "text": "J" }
       },
       {
         "command": "quickJump.input",
         "key": "k",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "k"
-        }
+        "args": { "text": "k" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+k",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "K"
-        }
+        "args": { "text": "K" }
       },
       {
         "command": "quickJump.input",
         "key": "l",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "l"
-        }
+        "args": { "text": "l" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+l",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "L"
-        }
+        "args": { "text": "L" }
       },
       {
         "command": "quickJump.input",
         "key": "m",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "m"
-        }
+        "args": { "text": "m" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+m",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "M"
-        }
+        "args": { "text": "M" }
       },
       {
         "command": "quickJump.input",
         "key": "n",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "n"
-        }
+        "args": { "text": "n" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+n",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "N"
-        }
+        "args": { "text": "N" }
       },
       {
         "command": "quickJump.input",
         "key": "o",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "o"
-        }
+        "args": { "text": "o" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+o",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "O"
-        }
+        "args": { "text": "O" }
       },
       {
         "command": "quickJump.input",
         "key": "p",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "p"
-        }
+        "args": { "text": "p" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+p",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "P"
-        }
+        "args": { "text": "P" }
       },
       {
         "command": "quickJump.input",
         "key": "q",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "q"
-        }
+        "args": { "text": "q" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+q",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "Q"
-        }
+        "args": { "text": "Q" }
       },
       {
         "command": "quickJump.input",
         "key": "r",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "r"
-        }
+        "args": { "text": "r" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+r",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "R"
-        }
+        "args": { "text": "R" }
       },
       {
         "command": "quickJump.input",
         "key": "s",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "s"
-        }
+        "args": { "text": "s" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+s",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "S"
-        }
+        "args": { "text": "S" }
       },
       {
         "command": "quickJump.input",
         "key": "t",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "t"
-        }
+        "args": { "text": "t" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+t",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "T"
-        }
+        "args": { "text": "T" }
       },
       {
         "command": "quickJump.input",
         "key": "u",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "u"
-        }
+        "args": { "text": "u" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+u",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "U"
-        }
+        "args": { "text": "U" }
       },
       {
         "command": "quickJump.input",
         "key": "v",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "v"
-        }
+        "args": { "text": "v" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+v",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "V"
-        }
+        "args": { "text": "V" }
       },
       {
         "command": "quickJump.input",
         "key": "w",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "w"
-        }
+        "args": { "text": "w" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+w",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "W"
-        }
+        "args": { "text": "W" }
       },
       {
         "command": "quickJump.input",
         "key": "x",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "x"
-        }
+        "args": { "text": "x" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+x",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "X"
-        }
+        "args": { "text": "X" }
       },
       {
         "command": "quickJump.input",
         "key": "y",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "y"
-        }
+        "args": { "text": "y" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+y",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "Y"
-        }
+        "args": { "text": "Y" }
       },
       {
         "command": "quickJump.input",
         "key": "z",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "z"
-        }
+        "args": { "text": "z" }
       },
       {
         "command": "quickJump.input",
         "key": "shift+z",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "Z"
-        }
+        "args": { "text": "Z" }
       },
       {
         "command": "quickJump.input",
         "key": "0",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "0"
-        }
+        "args": { "text": "0" }
       },
       {
         "command": "quickJump.input",
         "key": "1",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "1"
-        }
+        "args": { "text": "1" }
       },
       {
         "command": "quickJump.input",
         "key": "2",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "2"
-        }
+        "args": { "text": "2" }
       },
       {
         "command": "quickJump.input",
         "key": "3",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "3"
-        }
+        "args": { "text": "3" }
       },
       {
         "command": "quickJump.input",
         "key": "4",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "4"
-        }
+        "args": { "text": "4" }
       },
       {
         "command": "quickJump.input",
         "key": "5",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "5"
-        }
+        "args": { "text": "5" }
       },
       {
         "command": "quickJump.input",
         "key": "6",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "6"
-        }
+        "args": { "text": "6" }
       },
       {
         "command": "quickJump.input",
         "key": "7",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "7"
-        }
+        "args": { "text": "7" }
       },
       {
         "command": "quickJump.input",
         "key": "8",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "8"
-        }
+        "args": { "text": "8" }
       },
       {
         "command": "quickJump.input",
         "key": "9",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "9"
-        }
+        "args": { "text": "9" }
       },
       {
         "command": "quickJump.input",
         "key": "space",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": " "
-        }
+        "args": { "text": " " }
       },
       {
         "command": "quickJump.input",
         "key": ";",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": ";"
-        }
+        "args": { "text": ";" }
       },
       {
         "command": "quickJump.input",
         "key": "=",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "="
-        }
+        "args": { "text": "=" }
       },
       {
         "command": "quickJump.input",
         "key": ",",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": ","
-        }
+        "args": { "text": "," }
       },
       {
         "command": "quickJump.input",
         "key": "-",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "-"
-        }
+        "args": { "text": "-" }
       },
       {
         "command": "quickJump.input",
         "key": ".",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "."
-        }
+        "args": { "text": "." }
       },
       {
         "command": "quickJump.input",
         "key": "/",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "/"
-        }
+        "args": { "text": "/" }
       },
       {
         "command": "quickJump.input",
         "key": "`",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "`"
-        }
+        "args": { "text": "`" }
       },
       {
         "command": "quickJump.input",
         "key": "[",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "["
-        }
+        "args": { "text": "[" }
       },
       {
         "command": "quickJump.input",
         "key": "\\",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "\\"
-        }
+        "args": { "text": "\\" }
       },
       {
         "command": "quickJump.input",
         "key": "]",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "]"
-        }
+        "args": { "text": "]" }
       },
       {
         "command": "quickJump.input",
         "key": "'",
         "when": "quickJump.active && editorTextFocus",
-        "args": {
-          "text": "'"
-        }
+        "args": { "text": "'" }
       }
     ],
     "configuration": {
@@ -642,10 +494,7 @@
       "properties": {
         "quickJump.matchMode": {
           "type": "string",
-          "enum": [
-            "wordStart",
-            "anywhere"
-          ],
+          "enum": ["wordStart", "anywhere"],
           "enumDescriptions": [
             "Match only the start of words and identifiers.",
             "Match every occurrence of the search text."
@@ -666,11 +515,7 @@
         },
         "quickJump.reveal": {
           "type": "string",
-          "enum": [
-            "keep",
-            "center",
-            "upperThird"
-          ],
+          "enum": ["keep", "center", "upperThird"],
           "enumDescriptions": [
             "Keep the current viewport when possible.",
             "Reveal the destination near the center of the editor.",

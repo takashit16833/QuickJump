@@ -50,8 +50,9 @@ export const createHintRenderer = (): HintRenderer => {
         renderOptions: {
           before: {
             contentText: hint,
-            color: new vscode.ThemeColor('editor.foreground'),
-            backgroundColor: new vscode.ThemeColor('editor.findMatchBackground'),
+            color: new vscode.ThemeColor('editor.background'),
+            backgroundColor: new vscode.ThemeColor('editorWarning.foreground'),
+            borderRadius: '2px',
             fontWeight: 'bold',
             margin: `0 -${hint.length}ch 0 0`,
           },

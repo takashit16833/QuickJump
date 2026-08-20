@@ -17,3 +17,10 @@ test('cancel and backspace are active only during QuickJump', () => {
   assert.match(byCommand('quickJump.cancel').when, /quickJump\.active/);
   assert.match(byCommand('quickJump.backspace').when, /quickJump\.active/);
 });
+
+test('two-character jump uses a layout-friendly default shortcut', () => {
+  const binding = manifest.contributes.keybindings.find(
+    ({ command }) => command === 'quickJump.jumpTwoCharacters',
+  );
+  assert.equal(binding.key, 'ctrl+alt+;');
+});

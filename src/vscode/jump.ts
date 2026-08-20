@@ -8,9 +8,13 @@ const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Positio
     return;
   }
 
-  const firstLine = visibleRanges[0].start.line;
-  const lastLine = visibleRanges[visibleRanges.length - 1].end.line;
-  const visibleLineCount = Math.max(1, lastLine - firstLine + 1);
+  const visibleLineCount = Math.max(
+    1,
+    visibleRanges.reduce(
+      (count, range) => count + Math.max(1, range.end.line - range.start.line + 1),
+      0,
+    ),
+  );
   const topLine = Math.max(0, destination.line - Math.floor(visibleLineCount / 3));
   const top = new vscode.Position(topLine, 0);
   editor.revealRange(new vscode.Range(top, top), vscode.TextEditorRevealType.AtTop);
@@ -31,8 +35,8 @@ export const jumpToCandidate = async (
     viewColumn: target.viewColumn,
     preserveFocus: false,
     preview: false,
-    selection: new vscode.Range(destination, destination),
   });
+  editor.selection = new vscode.Selection(destination, destination);
   const destinationRange = new vscode.Range(destination, destination);
 
   switch (reveal) {

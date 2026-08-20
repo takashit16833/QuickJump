@@ -285,7 +285,7 @@ Commands:
 Default keys:
 
 - one-character: `Ctrl+;`
-- two-character: `Ctrl+Shift+;`
+- two-character: `Ctrl+Alt+;`
 
 These defaults are intentionally ordinary and replaceable. User-specific layouts such as `F13` belong in user/dotfiles configuration, not in the extension's defaults.
 
