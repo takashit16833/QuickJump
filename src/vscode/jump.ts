@@ -15,7 +15,7 @@ const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Positio
       0,
     ),
   );
-  const topLine = Math.max(0, destination.line - Math.floor(visibleLineCount / 3));
+  const topLine = Math.max(0, destination.line - Math.floor(visibleLineCount / 4));
   const top = new vscode.Position(topLine, 0);
   editor.revealRange(new vscode.Range(top, top), vscode.TextEditorRevealType.AtTop);
 };
