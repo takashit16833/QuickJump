@@ -1,38 +1,43 @@
 # QuickJump
 
-QuickJump is a small VS Code extension for jumping to visible text with as few keystrokes as possible.
+**Jump to what you can already see.**
 
-It is built around one idea: **jump to what you can already see**.
+QuickJump is a small, keyboard-driven VS Code extension for jumping directly to visible text. Type one or two search characters, choose a hint, and the cursor moves there immediately — even across visible editor groups.
 
-## Usage
+## Features
+
+- One-character and two-character jump commands.
+- Searches all currently visible editors and their vertically visible lines.
+- `wordStart` matching by default, with optional `anywhere` matching.
+- Configurable hint alphabet and deterministic hint priority.
+- Immediate jump when only one candidate exists.
+- Configurable reveal position from `0` to `100`.
+- Theme-customizable hint foreground and background colors.
+- Designed to coexist with VSCodeVim without overriding VS Code's global `type` command.
+
+## Quick Start
 
 QuickJump provides two commands:
 
-- **QuickJump: Jump by 1 Character** — type one search character, then choose a hint.
-- **QuickJump: Jump by 2 Characters** — type two search characters, then choose a hint.
-
-The search covers all currently visible text editors and only their vertically visible lines. Editors in multiple groups are searched together.
-
-If exactly one match exists, QuickJump jumps immediately. If multiple matches exist, hint labels are overlaid at the matching positions. Type a hint to move focus and the cursor to that match.
-
-## Default Keybindings
-
-| Command | Default |
+| Command | Default key |
 | --- | --- |
-| Jump by 1 Character | `Ctrl+;` |
-| Jump by 2 Characters | `Ctrl+Alt+;` |
+| **QuickJump: Jump by 1 Character** | `Ctrl+;` |
+| **QuickJump: Jump by 2 Characters** | `Ctrl+Alt+;` |
 
-These are ordinary VS Code keybindings and can be replaced in Keyboard Shortcuts or `keybindings.json`.
+1. Run one of the commands.
+2. Type the search character or characters.
+3. If multiple matches exist, type the hint shown at the destination.
+4. QuickJump focuses the target editor and moves the cursor.
 
-QuickJump captures its search and hint keys only while a jump session is active. It deliberately does **not** override VS Code's global `type` command, which helps it coexist with modal editing extensions such as VSCodeVim.
+If exactly one match exists, QuickJump jumps immediately. If no matches exist, the session exits silently.
 
-The built-in input bindings cover Latin letters (including Shift for uppercase), digits, space, and common unshifted punctuation. The default hint alphabet and `otaniseh`-style custom alphabets are fully covered.
+Default keybindings are ordinary VS Code keybindings and can be replaced in Keyboard Shortcuts or `keybindings.json`.
 
 ## Matching
 
-The default match mode is `wordStart`.
+The default mode is `wordStart`.
 
-`wordStart` treats the start of an identifier or word as a candidate, without splitting camelCase, PascalCase, or snake_case internally.
+It treats the start of a word or identifier as a candidate without splitting camelCase, PascalCase, or snake_case internally:
 
 ```text
 getUserName     -> g
@@ -53,49 +58,25 @@ The default hint characters are:
 asdfghjkl
 ```
 
-Users can replace them with their preferred layout.
+Change `quickJump.hintCharacters` to use a different keyboard layout or preferred order.
 
-QuickJump assigns shorter, easier hints to higher-priority candidates. All hints in one session have the same length, so no hint can be a prefix of another.
+QuickJump assigns hints in this order:
 
-With nine hint characters:
+1. candidates in the active editor;
+2. candidates nearest to the active cursor;
+3. candidates in other visible editors in deterministic group order.
+
+All hints in a session have the same width, so no hint can be a prefix of another. With nine hint characters:
 
 - up to 9 candidates use one-character hints;
 - up to 81 candidates use two-character hints;
 - up to 729 candidates use three-character hints.
 
-As a hint is typed, non-matching candidates disappear. Invalid hint input is ignored and QuickJump keeps waiting.
+As a hint is typed, non-matching candidates disappear. Invalid hint input is ignored.
 
-## Candidate Priority
+## Reveal Position
 
-Hints are assigned in this order:
-
-1. candidates in the active editor;
-2. candidates nearest to that editor's current cursor;
-3. candidates in the other visible editors in a deterministic group order.
-
-Earlier characters in `quickJump.hintCharacters` therefore go to more likely jump targets first.
-
-The same document shown in two editor groups is treated as two distinct visible targets.
-
-## Display
-
-Hint labels are overlaid at the beginning of each match, where the user's gaze is already focused. QuickJump does not add a separate highlight to every matched search string.
-
-While QuickJump is waiting for input, a small English status-bar item is shown, for example:
-
-```text
-QuickJump: Type 1 character
-QuickJump: Type 2 characters
-QuickJump: Search 1/2
-QuickJump: Type hint
-QuickJump: Hint 1/2
-```
-
-The status-bar item disappears when the jump finishes or is cancelled.
-
-## Jump Reveal Position
-
-`quickJump.revealMode` controls how the destination is revealed:
+`quickJump.revealMode` controls what happens to the viewport after a jump:
 
 - `keep` — keep the current viewport when possible. This is the default.
 - `position` — place the destination near the percentage configured by `quickJump.revealPosition`.
@@ -110,7 +91,7 @@ The status-bar item disappears when the jump finishes or is cancelled.
 100 -> near bottom
 ```
 
-For example:
+Example:
 
 ```json
 {
@@ -119,11 +100,16 @@ For example:
 }
 ```
 
-The position is intentionally approximate. Folding, line wrapping, Sticky Scroll, and document boundaries can affect where a source line is actually displayed.
+The position is intentionally approximate. Folding, line wrapping, Sticky Scroll, and document boundaries can affect where a source line is displayed.
 
 ## Hint Colors
 
-QuickJump exposes theme colors for hint labels. Customize them with normal VS Code color customization:
+QuickJump contributes two theme colors:
+
+- `quickJump.hintBackground`
+- `quickJump.hintForeground`
+
+Customize them through normal VS Code color customization:
 
 ```json
 {
@@ -133,15 +119,6 @@ QuickJump exposes theme colors for hint labels. Customize them with normal VS Co
   }
 }
 ```
-
-## Cancellation
-
-- `Esc` cancels QuickJump immediately.
-- `Backspace` removes the latest hint input, or returns from hint selection to search input.
-- If there are no matches, QuickJump exits silently.
-- Editor selection, viewport, document, visible-editor, or focus changes that invalidate the current candidates cancel the active session.
-
-No notification is shown for a normal cancellation or a zero-match result.
 
 ## Settings
 
@@ -153,7 +130,12 @@ No notification is shown for a normal cancellation or a zero-match result.
 | `quickJump.revealMode` | `keep` | `keep`, `position` |
 | `quickJump.revealPosition` | `25` | number from `0` to `100` |
 
-Hint colors are configured through `workbench.colorCustomizations` using `quickJump.hintBackground` and `quickJump.hintForeground`.
+## Cancellation
+
+- `Esc` cancels QuickJump immediately.
+- `Backspace` removes the latest hint input, or returns from hint selection to search input.
+- Editor selection, viewport, document, visible-editor, or focus changes that invalidate the current candidates cancel the active session.
+- Normal cancellation and zero-match results do not show notifications.
 
 ## Known Limitation
 
@@ -161,7 +143,19 @@ VS Code exposes visible ranges vertically, not horizontally. QuickJump therefore
 
 ## Installation
 
-QuickJump can be installed locally as a VSIX package. From the repository root:
+### Visual Studio Marketplace
+
+Install **QuickJump - Visible Text Navigation** from the VS Code Marketplace.
+
+The extension identifier is:
+
+```text
+takashit16833.quickjump
+```
+
+### Local VSIX
+
+From the repository root:
 
 ```sh
 npm install
@@ -169,11 +163,17 @@ npm run package
 code --install-extension quickjump-1.0.0.vsix
 ```
 
-`npm run package` runs the compile/test checks and then creates the VSIX file. The generated `*.vsix` file is ignored by Git.
+`npm run package` runs compile/test checks and then creates the VSIX file.
 
-You can also install the generated file from VS Code: open the Extensions view, choose **...** → **Install from VSIX...**, and select `quickjump-1.0.0.vsix`.
+You can also use **Extensions → ... → Install from VSIX...** in VS Code.
 
-After installing or updating the VSIX, reload VS Code if QuickJump is not immediately available.
+## Support
+
+Bug reports and feature requests are welcome in GitHub Issues:
+
+https://github.com/takashit16833/QuickJump/issues
+
+See [SUPPORT.md](./SUPPORT.md) for the information that is useful when reporting a problem.
 
 ## Development
 
@@ -183,16 +183,16 @@ Requirements:
 - npm
 - VS Code
 
-Install dependencies, compile, and run the unit tests:
+Install dependencies and run all checks:
 
 ```sh
 npm install
 npm run check
 ```
 
-Press `F5` in VS Code to launch an Extension Development Host for manual testing.
+Press `F5` in VS Code to launch an Extension Development Host.
 
-To build an installable VSIX after the checks pass:
+To build an installable VSIX:
 
 ```sh
 npm run package
