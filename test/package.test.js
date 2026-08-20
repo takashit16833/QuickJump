@@ -24,3 +24,9 @@ test('two-character jump uses a layout-friendly default shortcut', () => {
   );
   assert.equal(binding.key, 'ctrl+alt+;');
 });
+
+test('hint colors are contributed for theme customization', () => {
+  const colorIds = new Set(manifest.contributes.colors.map(({ id }) => id));
+  assert.equal(colorIds.has('quickJump.hintBackground'), true);
+  assert.equal(colorIds.has('quickJump.hintForeground'), true);
+});

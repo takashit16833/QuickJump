@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import type { Candidate, RevealMode } from '../core/types';
 
+const UPPER_THIRD_VISIBLE_OFFSET = 0.22;
+
 const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Position): void => {
   const visibleRanges = editor.visibleRanges;
   if (visibleRanges.length === 0) {
@@ -15,7 +17,10 @@ const revealUpperThird = (editor: vscode.TextEditor, destination: vscode.Positio
       0,
     ),
   );
-  const topLine = Math.max(0, destination.line - Math.floor(visibleLineCount / 4));
+  const topLine = Math.max(
+    0,
+    destination.line - Math.floor(visibleLineCount * UPPER_THIRD_VISIBLE_OFFSET),
+  );
   const top = new vscode.Position(topLine, 0);
   editor.revealRange(new vscode.Range(top, top), vscode.TextEditorRevealType.AtTop);
 };

@@ -50,8 +50,8 @@ export const createHintRenderer = (): HintRenderer => {
         renderOptions: {
           before: {
             contentText: hint,
-            color: new vscode.ThemeColor('editor.background'),
-            backgroundColor: new vscode.ThemeColor('editorWarning.foreground'),
+            color: new vscode.ThemeColor('quickJump.hintForeground'),
+            backgroundColor: new vscode.ThemeColor('quickJump.hintBackground'),
             margin: `0 -${hint.length}ch 0 0`,
           },
         },
