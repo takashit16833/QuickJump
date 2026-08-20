@@ -1,0 +1,93 @@
+{
+  "name": "quickjump",
+  "displayName": "QuickJump",
+  "description": "Jump to visible text in VS Code with short search and hint keystrokes.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "quickJump.jumpOneCharacter",
+        "title": "Jump by 1 Character",
+        "category": "QuickJump"
+      },
+      {
+        "command": "quickJump.jumpTwoCharacters",
+        "title": "Jump by 2 Characters",
+        "category": "QuickJump"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "quickJump.jumpOneCharacter",
+        "key": "ctrl+;",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "quickJump.jumpTwoCharacters",
+        "key": "ctrl+shift+;",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "QuickJump",
+      "properties": {
+        "quickJump.matchMode": {
+          "type": "string",
+          "enum": [
+            "wordStart",
+            "anywhere"
+          ],
+          "enumDescriptions": [
+            "Match only the start of words and identifiers.",
+            "Match every occurrence of the search text."
+          ],
+          "default": "wordStart",
+          "description": "Controls which text positions become jump candidates."
+        },
+        "quickJump.caseSensitive": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether search matching is case-sensitive."
+        },
+        "quickJump.hintCharacters": {
+          "type": "string",
+          "default": "asdfghjkl",
+          "minLength": 2,
+          "description": "Characters used to generate jump hints, in priority order."
+        },
+        "quickJump.reveal": {
+          "type": "string",
+          "enum": [
+            "keep",
+            "center",
+            "upperThird"
+          ],
+          "enumDescriptions": [
+            "Keep the current viewport when possible.",
+            "Reveal the destination near the center of the editor.",
+            "Reveal the destination roughly one third from the top."
+          ],
+          "default": "keep",
+          "description": "Controls where the destination appears after a jump."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.100.0",
+    "typescript": "^5.9.2"
+  }
+}
