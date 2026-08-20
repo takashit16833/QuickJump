@@ -23,6 +23,28 @@
         "category": "QuickJump"
       }
     ],
+    "colors": [
+      {
+        "id": "quickJump.hintBackground",
+        "description": "Background color of QuickJump hint labels.",
+        "defaults": {
+          "dark": "editorWarning.foreground",
+          "light": "editorWarning.foreground",
+          "highContrast": "#FFFF00",
+          "highContrastLight": "#B58900"
+        }
+      },
+      {
+        "id": "quickJump.hintForeground",
+        "description": "Foreground color of QuickJump hint labels.",
+        "defaults": {
+          "dark": "editor.background",
+          "light": "editor.foreground",
+          "highContrast": "#000000",
+          "highContrastLight": "#000000"
+        }
+      }
+    ],
     "keybindings": [
       {
         "command": "quickJump.jumpOneCharacter",
