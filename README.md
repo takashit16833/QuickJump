@@ -98,16 +98,16 @@ The status-bar item disappears when the jump finishes or is cancelled.
 `quickJump.revealMode` controls how the destination is revealed:
 
 - `keep` — keep the current viewport when possible. This is the default.
-- `position` — place the destination at the percentage configured by `quickJump.revealPosition`.
+- `position` — place the destination near the percentage configured by `quickJump.revealPosition`.
 
 `quickJump.revealPosition` accepts any number from `0` to `100`:
 
 ```text
-0   -> top
-25  -> upper quarter
-50  -> center
-75  -> lower quarter
-100 -> bottom
+0   -> near top
+25  -> near upper quarter
+50  -> near center
+75  -> near lower quarter
+100 -> near bottom
 ```
 
 For example:
@@ -119,7 +119,7 @@ For example:
 }
 ```
 
-The position is approximate because folding, line wrapping, and document boundaries affect where a source line can be displayed.
+The position is intentionally approximate. Folding, line wrapping, Sticky Scroll, and document boundaries can affect where a source line is actually displayed.
 
 ## Hint Colors
 
@@ -152,6 +152,8 @@ No notification is shown for a normal cancellation or a zero-match result.
 | `quickJump.hintCharacters` | `asdfghjkl` | string |
 | `quickJump.revealMode` | `keep` | `keep`, `position` |
 | `quickJump.revealPosition` | `25` | number from `0` to `100` |
+
+Hint colors are configured through `workbench.colorCustomizations` using `quickJump.hintBackground` and `quickJump.hintForeground`.
 
 ## Known Limitation
 
