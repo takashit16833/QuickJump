@@ -6,21 +6,17 @@ QuickJump is a deliberately small VS Code extension for keyboard-driven cursor j
 
 The project exists because existing jump extensions either did not match the desired interaction model or were unreliable in the target environment. Do not turn QuickJump into a general navigation, search, or symbol-browsing extension.
 
-Current release contract: **v1.1.0**.
+Current release contract: **v1.2.0**.
 
 ## Product Contract
 
-QuickJump has three user-facing commands:
-
-1. one-character search;
-2. two-character search;
-3. timer search, collecting an arbitrary-length query until the user stops typing or presses `Enter`.
+QuickJump has **one user-facing command**, `quickJump.jump`, bound to `Ctrl+;` by default. The `quickJump.jumpMode` setting selects `timer` (default), `oneCharacter`, or `twoCharacters`. Timer search collects an arbitrary-length query until the user stops typing or presses `Enter`.
 
 A session follows this model:
 
 ```text
 start command
-  -> collect 1 or 2 search characters, or a variable-length timer search
+  -> collect 1 or 2 search characters, or a variable-length timer search according to quickJump.jumpMode
   -> find candidates in visible editors / visible lines
   -> zero candidates: exit silently
   -> one candidate: jump immediately
@@ -35,11 +31,11 @@ Status-bar text is user-facing and must be English.
 
 ## Scope
 
-### v1.1 includes
+### v1.2 includes
 
 - all `vscode.window.visibleTextEditors`;
 - only vertically visible ranges of each editor;
-- one-character, two-character, and timer search commands;
+- one configurable jump command with one-character, two-character, and timer search modes;
 - configurable `wordStart` / `anywhere` matching;
 - case-insensitive matching by default;
 - configurable hint characters;
@@ -53,7 +49,7 @@ Status-bar text is user-facing and must be English.
 - timer search default delay of 0.5 seconds, configurable from 0.1 to 10 seconds;
 - cancellation when the editor context changes in a way that invalidates candidates.
 
-### Explicit non-goals for v1.1
+### Explicit non-goals for v1.2
 
 - searching hidden parts of a document;
 - project-wide search;
@@ -270,6 +266,7 @@ VS Code state -> plain data -> pure transformation -> VS Code adapter applies ef
 
 Settings:
 
+- `quickJump.jumpMode`: `timer` | `oneCharacter` | `twoCharacters`, default `timer`; controls the `quickJump.jump` command;
 - `quickJump.matchMode`: `wordStart` | `anywhere`, default `wordStart`;
 - `quickJump.caseSensitive`: boolean, default `false`;
 - `quickJump.timerDelay`: seconds, `0.1..10`, default `0.5`; available only for timer search;
@@ -286,17 +283,7 @@ Do not add a QuickJump-specific keybinding setting. Contribute default keybindin
 
 ## Default Commands and Keys
 
-Commands:
-
-- `quickJump.jumpOneCharacter`;
-- `quickJump.jumpTwoCharacters`;
-- `quickJump.jumpWithTimer`.
-
-Default keys:
-
-- one-character: `Ctrl+;`;
-- two-character: `Ctrl+Alt+;`;
-- timer: `Ctrl+Shift+;`.
+One user-facing command: `quickJump.jump` (default key: `Ctrl+;`). Search mode is selected by `quickJump.jumpMode`. Other keybindings in the manifest are used only while QuickJump captures search/hint input.
 
 These defaults are intentionally ordinary and replaceable. User-specific layouts such as `F13` belong in user/dotfiles configuration, not in the extension's defaults.
 
@@ -310,7 +297,7 @@ Automated tests should cover at least:
 - candidate ordering;
 - reveal positions `0`, `50`, and `100`, plus clamping;
 - default hint keys being capturable;
-- timer delay normalization and timer command bindings;
+- timer delay normalization, single default start binding, and mode selection;
 - no global `type` override;
 - manifest reveal settings and theme color contributions.
 
@@ -320,7 +307,7 @@ Manual Extension Development Host verification should cover:
 - horizontal and vertical split editors;
 - same document in two groups;
 - zero, one, few, and many candidates;
-- one-character, two-character, and timer commands;
+- single jump command in each configured mode (one-character, two-character, and timer);
 - light and dark themes;
 - folded code;
 - `Esc` and `Backspace` at every session stage;
@@ -330,6 +317,6 @@ Manual Extension Development Host verification should cover:
 
 ## README vs AGENTS.md
 
-README is for users: what QuickJump does, commands, settings, and usage.
+README is a short Japanese usage guide. Keep only essential controls, primary settings, and local installation steps. Do not include Marketplace promotion, Issues links, or developer workflow.
 
 AGENTS.md is for maintainers and AI assistants: intent, constraints, architecture, tradeoffs, and implementation rules.

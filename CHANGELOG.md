@@ -2,6 +2,11 @@
 
 All notable changes to QuickJump are documented here.
 
+## 1.2.0 - 2026-11-06
+
+- Unified the default jump shortcut to `Ctrl+;`, configurable via `quickJump.jumpMode` (default: timer).
+- Simplified the Japanese README into a short local usage guide.
+
 ## 1.1.0 - 2026-11-06
 
 - Added timer-based variable-length search with a `Ctrl+Shift+;` default shortcut.

@@ -6,7 +6,10 @@ import type { MatchMode, RevealMode, RevealOptions } from '../core/types';
 export const DEFAULT_HINT_CHARACTERS = 'asdfghjkl';
 export const DEFAULT_WORD_SEPARATORS = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
 
+export type JumpMode = 'timer' | 'oneCharacter' | 'twoCharacters';
+
 export interface QuickJumpConfig {
+  readonly jumpMode: JumpMode;
   readonly matchMode: MatchMode;
   readonly caseSensitive: boolean;
   readonly hintCharacters: string;
@@ -17,6 +20,7 @@ export interface QuickJumpConfig {
 export const readConfig = (): QuickJumpConfig => {
   const config = vscode.workspace.getConfiguration('quickJump');
   return {
+    jumpMode: config.get<JumpMode>('jumpMode', 'timer'),
     matchMode: config.get<MatchMode>('matchMode', 'wordStart'),
     caseSensitive: config.get<boolean>('caseSensitive', false),
     hintCharacters: config.get<string>('hintCharacters', DEFAULT_HINT_CHARACTERS),

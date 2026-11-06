@@ -26,11 +26,16 @@ test('cancel and backspace are active only during QuickJump', () => {
   assert.match(byCommand('quickJump.backspace').when, /quickJump\.active/);
 });
 
-test('two-character jump uses a layout-friendly default shortcut', () => {
-  const binding = manifest.contributes.keybindings.find(
-    ({ command }) => command === 'quickJump.jumpTwoCharacters',
+test('Ctrl+; is the only default search-start shortcut', () => {
+  assert.deepEqual(manifest.contributes.commands.map(({ command }) => command), ['quickJump.jump']);
+  const startBindings = manifest.contributes.keybindings.filter(({ when }) =>
+    when?.includes('!quickJump.active'),
   );
-  assert.equal(binding.key, 'ctrl+alt+;');
+  assert.deepEqual(startBindings, [{
+    command: 'quickJump.jump',
+    key: 'ctrl+;',
+    when: 'editorTextFocus && !quickJump.active',
+  }]);
 });
 
 test('hint colors are contributed for theme customization', () => {
@@ -51,7 +56,7 @@ test('reveal position settings support a 0 to 100 percentage', () => {
 
 test('manifest is ready for local VSIX packaging', () => {
   assert.equal(manifest.publisher, 'takashit16833');
-  assert.equal(manifest.version, '1.1.0');
+  assert.equal(manifest.version, '1.2.0');
   assert.match(manifest.scripts.package, /npm run check/);
   assert.match(manifest.scripts.package, /vsce package/);
   assert.equal(manifest.devDependencies['@vscode/vsce'], '^3.9.2');
@@ -71,16 +76,14 @@ test('manifest includes Marketplace presentation and support metadata', () => {
 });
 
 
-test('timer command has a default shortcut and Enter confirmation', () => {
-  const commands = new Set(manifest.contributes.commands.map(({ command }) => command));
-  assert.equal(commands.has('quickJump.jumpWithTimer'), true);
-  const byCommand = (command) => manifest.contributes.keybindings.find((binding) => binding.command === command);
-  assert.equal(byCommand('quickJump.jumpWithTimer').key, 'ctrl+shift+;');
-  assert.equal(byCommand('quickJump.jumpWithTimer').when, 'editorTextFocus && !quickJump.active');
-  assert.equal(byCommand('quickJump.confirm').key, 'enter');
-  assert.equal(byCommand('quickJump.confirm').when, 'quickJump.active && editorTextFocus');
-  const timerDelay = manifest.contributes.configuration.properties['quickJump.timerDelay'];
-  assert.equal(timerDelay.default, 0.5);
-  assert.equal(timerDelay.minimum, 0.1);
-  assert.equal(timerDelay.maximum, 10);
+test('search mode defaults to timer, and Enter confirms timer searches', () => {
+  const properties = manifest.contributes.configuration.properties;
+  assert.equal(properties['quickJump.jumpMode'].default, 'timer');
+  assert.deepEqual(properties['quickJump.jumpMode'].enum, ['timer', 'oneCharacter', 'twoCharacters']);
+  const confirm = manifest.contributes.keybindings.find(({ command }) => command === 'quickJump.confirm');
+  assert.equal(confirm.key, 'enter');
+  assert.equal(confirm.when, 'quickJump.active && editorTextFocus');
+  assert.equal(properties['quickJump.timerDelay'].default, 0.5);
+  assert.equal(properties['quickJump.timerDelay'].minimum, 0.1);
+  assert.equal(properties['quickJump.timerDelay'].maximum, 10);
 });

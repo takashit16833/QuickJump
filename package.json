@@ -3,7 +3,7 @@
   "displayName": "QuickJump - Visible Text Navigation",
   "publisher": "takashit16833",
   "description": "Jump instantly to visible text across editor groups with short search and hint keystrokes.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "icon": "images/icon.png",
   "galleryBanner": {
@@ -44,18 +44,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "quickJump.jumpOneCharacter",
-        "title": "Jump by 1 Character",
-        "category": "QuickJump"
-      },
-      {
-        "command": "quickJump.jumpTwoCharacters",
-        "title": "Jump by 2 Characters",
-        "category": "QuickJump"
-      },
-      {
-        "command": "quickJump.jumpWithTimer",
-        "title": "Jump with Timer",
+        "command": "quickJump.jump",
+        "title": "Jump",
         "category": "QuickJump"
       }
     ],
@@ -83,18 +73,8 @@
     ],
     "keybindings": [
       {
-        "command": "quickJump.jumpOneCharacter",
+        "command": "quickJump.jump",
         "key": "ctrl+;",
-        "when": "editorTextFocus && !quickJump.active"
-      },
-      {
-        "command": "quickJump.jumpTwoCharacters",
-        "key": "ctrl+alt+;",
-        "when": "editorTextFocus && !quickJump.active"
-      },
-      {
-        "command": "quickJump.jumpWithTimer",
-        "key": "ctrl+shift+;",
         "when": "editorTextFocus && !quickJump.active"
       },
       {
@@ -560,6 +540,17 @@
     "configuration": {
       "title": "QuickJump",
       "properties": {
+        "quickJump.jumpMode": {
+          "type": "string",
+          "enum": ["timer", "oneCharacter", "twoCharacters"],
+          "enumDescriptions": [
+            "Wait after the last search character.",
+            "Search with one character.",
+            "Search with two characters."
+          ],
+          "default": "timer",
+          "description": "Search mode used by QuickJump: Jump."
+        },
         "quickJump.matchMode": {
           "type": "string",
           "enum": ["wordStart", "anywhere"],

@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import { createQuickJumpController } from './controller';
+import { readConfig } from './vscode/config';
 import { createHintRenderer } from './vscode/decorations';
 import { createQuickJumpStatusBar } from './vscode/statusBar';
 
-const JUMP_ONE_CHARACTER = 'quickJump.jumpOneCharacter';
-const JUMP_TWO_CHARACTERS = 'quickJump.jumpTwoCharacters';
-const JUMP_TIMER = 'quickJump.jumpWithTimer';
+const JUMP = 'quickJump.jump';
 const CONFIRM = 'quickJump.confirm';
 const INPUT = 'quickJump.input';
 const CANCEL = 'quickJump.cancel';
@@ -27,9 +26,16 @@ export function activate(context: vscode.ExtensionContext): void {
     renderer,
     statusBar,
     controller,
-    vscode.commands.registerCommand(JUMP_ONE_CHARACTER, () => controller.start(1)),
-    vscode.commands.registerCommand(JUMP_TWO_CHARACTERS, () => controller.start(2)),
-    vscode.commands.registerCommand(JUMP_TIMER, () => controller.startTimer()),
+    vscode.commands.registerCommand(JUMP, () => {
+      switch (readConfig().jumpMode) {
+        case 'oneCharacter':
+          return controller.start(1);
+        case 'twoCharacters':
+          return controller.start(2);
+        default:
+          return controller.startTimer();
+      }
+    }),
     vscode.commands.registerCommand(CONFIRM, () => controller.confirm()),
     vscode.commands.registerCommand(INPUT, (args?: { readonly text?: string }) => controller.input(args?.text ?? '')),
     vscode.commands.registerCommand(CANCEL, () => controller.cancel()),
