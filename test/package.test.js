@@ -76,9 +76,9 @@ test('timer command has a default shortcut and Enter confirmation', () => {
   assert.equal(commands.has('quickJump.jumpWithTimer'), true);
   const byCommand = (command) => manifest.contributes.keybindings.find((binding) => binding.command === command);
   assert.equal(byCommand('quickJump.jumpWithTimer').key, 'ctrl+shift+;');
-  assert.match(byCommand('quickJump.jumpWithTimer').when, /!quickJump\\.active/);
+  assert.equal(byCommand('quickJump.jumpWithTimer').when, 'editorTextFocus && !quickJump.active');
   assert.equal(byCommand('quickJump.confirm').key, 'enter');
-  assert.match(byCommand('quickJump.confirm').when, /quickJump\\.active/);
+  assert.equal(byCommand('quickJump.confirm').when, 'quickJump.active && editorTextFocus');
   const timerDelay = manifest.contributes.configuration.properties['quickJump.timerDelay'];
   assert.equal(timerDelay.default, 0.5);
   assert.equal(timerDelay.minimum, 0.1);
