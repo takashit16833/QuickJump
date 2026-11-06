@@ -35,5 +35,5 @@ VS Code の `settings.json` で変更できます。設定を省略した場合�
 ```sh
 npm install
 npm run package
-code --install-extension --force quickjump-1.2.0.vsix
+code --install-extension ./quickjump-1.2.0.vsix --force
 ```
