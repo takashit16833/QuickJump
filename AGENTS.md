@@ -6,14 +6,15 @@ QuickJump is a deliberately small VS Code extension for keyboard-driven cursor j
 
 The project exists because existing jump extensions either did not match the desired interaction model or were unreliable in the target environment. Do not turn QuickJump into a general navigation, search, or symbol-browsing extension.
 
-Current release contract: **v1.0.0**.
+Current release contract: **v1.1.0**.
 
 ## Product Contract
 
-QuickJump has two user-facing commands:
+QuickJump has three user-facing commands:
 
 1. one-character search;
-2. two-character search.
+2. two-character search;
+3. timer search, collecting an arbitrary-length query until the user stops typing or presses `Enter`.
 
 A session follows this model:
 
@@ -38,7 +39,7 @@ Status-bar text is user-facing and must be English.
 
 - all `vscode.window.visibleTextEditors`;
 - only vertically visible ranges of each editor;
-- one-character and two-character search commands;
+- one-character, two-character, and timer search commands;
 - configurable `wordStart` / `anywhere` matching;
 - case-insensitive matching by default;
 - configurable hint characters;
@@ -49,6 +50,7 @@ Status-bar text is user-facing and must be English.
 - `keep` reveal behavior or configurable `0..100` reveal position;
 - user-customizable hint foreground/background theme colors;
 - silent zero-match exit;
+- timer search default delay of 0.5 seconds, configurable from 0.1 to 10 seconds;
 - cancellation when the editor context changes in a way that invalidates candidates.
 
 ### Explicit non-goals for v1.0
@@ -82,10 +84,16 @@ Instead:
 - set the `quickJump.active` context key only while a session is active;
 - contribute character keybindings guarded by `quickJump.active && editorTextFocus`;
 - route those bindings to the internal `quickJump.input` command with the typed character in `args.text`;
-- bind `Esc` to `quickJump.cancel` and `Backspace` to `quickJump.backspace` under the same context;
+- bind `Esc` to `quickJump.cancel`, `Backspace` to `quickJump.backspace`, and `Enter` to `quickJump.confirm` under the same context;
 - keep normal typing completely untouched while QuickJump is inactive.
 
 The built-in bindings cover Latin letters, uppercase Latin letters via Shift, digits, space, and common unshifted punctuation. This covers the default hint alphabet and user alphabets such as `otaniseh`.
+
+## Timer Search
+
+Timer search collects as many search characters as needed, showing the current query and number of matches in the status bar. Every input resets a one-shot `setTimeout`; there is no polling. The countdown starts only after the first character. `Enter` confirms immediately; `Esc`, session completion, context changes, and disposal clear the pending timeout. Check the current session identity in the timeout callback so an old timer cannot resolve a newer search.
+
+Do not jump after the first unique match while timer search is still collecting input. After the timeout or `Enter`, reuse the existing zero/one/multiple candidate resolution logic. Existing fixed-length commands must not change behavior. `Backspace` during search resets or cancels the timer; returning from hint selection to search resumes the timer.
 
 ## Cancellation Model
 
@@ -263,6 +271,7 @@ v1.0 settings:
 
 - `quickJump.matchMode`: `wordStart` | `anywhere`, default `wordStart`;
 - `quickJump.caseSensitive`: boolean, default `false`;
+- `quickJump.timerDelay`: seconds, `0.1..10`, default `0.5`; available only for timer search;
 - `quickJump.hintCharacters`: string, default `asdfghjkl`;
 - `quickJump.revealMode`: `keep` | `position`, default `keep`;
 - `quickJump.revealPosition`: number `0..100`, default `25`.
@@ -279,12 +288,14 @@ Do not add a QuickJump-specific keybinding setting. Contribute default keybindin
 Commands:
 
 - `quickJump.jumpOneCharacter`;
-- `quickJump.jumpTwoCharacters`.
+- `quickJump.jumpTwoCharacters`;
+- `quickJump.jumpWithTimer`.
 
 Default keys:
 
 - one-character: `Ctrl+;`;
-- two-character: `Ctrl+Alt+;`.
+- two-character: `Ctrl+Alt+;`;
+- timer: `Ctrl+Shift+;`.
 
 These defaults are intentionally ordinary and replaceable. User-specific layouts such as `F13` belong in user/dotfiles configuration, not in the extension's defaults.
 
@@ -298,6 +309,7 @@ Automated tests should cover at least:
 - candidate ordering;
 - reveal positions `0`, `50`, and `100`, plus clamping;
 - default hint keys being capturable;
+- timer delay normalization and timer command bindings;
 - no global `type` override;
 - manifest reveal settings and theme color contributions.
 
@@ -307,7 +319,7 @@ Manual Extension Development Host verification should cover:
 - horizontal and vertical split editors;
 - same document in two groups;
 - zero, one, few, and many candidates;
-- one-character and two-character commands;
+- one-character, two-character, and timer commands;
 - light and dark themes;
 - folded code;
 - `Esc` and `Backspace` at every session stage;

@@ -2,6 +2,12 @@
 
 All notable changes to QuickJump are documented here.
 
+## 1.1.0 - 2026-11-06
+
+- Added timer-based variable-length search with a `Ctrl+Shift+;` default shortcut.
+- Added configurable `quickJump.timerDelay` (default 0.5 seconds), live candidate counts, and `Enter` confirmation.
+- Preserved existing one-character and two-character navigation and `anywhere` matching.
+
 ## 1.0.0 - 2026-08-20
 
 Initial Marketplace release.

@@ -5,6 +5,8 @@ import { createQuickJumpStatusBar } from './vscode/statusBar';
 
 const JUMP_ONE_CHARACTER = 'quickJump.jumpOneCharacter';
 const JUMP_TWO_CHARACTERS = 'quickJump.jumpTwoCharacters';
+const JUMP_TIMER = 'quickJump.jumpWithTimer';
+const CONFIRM = 'quickJump.confirm';
 const INPUT = 'quickJump.input';
 const CANCEL = 'quickJump.cancel';
 const BACKSPACE = 'quickJump.backspace';
@@ -27,6 +29,8 @@ export function activate(context: vscode.ExtensionContext): void {
     controller,
     vscode.commands.registerCommand(JUMP_ONE_CHARACTER, () => controller.start(1)),
     vscode.commands.registerCommand(JUMP_TWO_CHARACTERS, () => controller.start(2)),
+    vscode.commands.registerCommand(JUMP_TIMER, () => controller.startTimer()),
+    vscode.commands.registerCommand(CONFIRM, () => controller.confirm()),
     vscode.commands.registerCommand(INPUT, (args?: { readonly text?: string }) => controller.input(args?.text ?? '')),
     vscode.commands.registerCommand(CANCEL, () => controller.cancel()),
     vscode.commands.registerCommand(BACKSPACE, () => controller.backspace()),

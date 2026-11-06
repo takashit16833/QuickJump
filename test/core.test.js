@@ -11,6 +11,7 @@ const {
 } = require('../out/core/hints');
 const { orderCandidates } = require('../out/core/order');
 const { normalizeRevealPosition, revealTopLine } = require('../out/core/reveal');
+const { normalizeTimerDelaySeconds } = require('../out/core/timer');
 
 const separators = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
 
@@ -84,4 +85,13 @@ test('reveal position clamps invalid percentages', () => {
   assert.equal(normalizeRevealPosition(-10), 0);
   assert.equal(normalizeRevealPosition(120), 100);
   assert.equal(normalizeRevealPosition(Number.NaN), 25);
+});
+
+
+test('timer delay defaults and clamps invalid values', () => {
+  assert.equal(normalizeTimerDelaySeconds(0.5), 0.5);
+  assert.equal(normalizeTimerDelaySeconds(0), 0.1);
+  assert.equal(normalizeTimerDelaySeconds(15), 10);
+  assert.equal(normalizeTimerDelaySeconds(Number.NaN), 0.5);
+  assert.equal(normalizeTimerDelaySeconds(Number.POSITIVE_INFINITY), 0.5);
 });

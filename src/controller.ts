@@ -10,16 +10,17 @@ import type { QuickJumpStatusBar } from './vscode/statusBar';
 const ACTIVE_CONTEXT = 'quickJump.active';
 
 type SearchLength = 1 | 2;
+type SearchMode = { readonly kind: 'fixed'; readonly length: SearchLength } | { readonly kind: 'timer' };
 
 type Session =
   | {
       readonly phase: 'search';
-      readonly searchLength: SearchLength;
+      readonly mode: SearchMode;
       readonly searchInput: string;
     }
   | {
       readonly phase: 'hint';
-      readonly searchLength: SearchLength;
+      readonly mode: SearchMode;
       readonly searchInput: string;
       readonly hintInput: string;
       readonly editors: readonly vscode.TextEditor[];
@@ -28,6 +29,8 @@ type Session =
 
 export interface QuickJumpController extends vscode.Disposable {
   start(searchLength: SearchLength): Promise<void>;
+  startTimer(): Promise<void>;
+  confirm(): Promise<void>;
   input(text: string): Promise<void>;
   backspace(): Promise<void>;
   cancel(): Promise<void>;
@@ -42,6 +45,14 @@ export const createQuickJumpController = (
 ): QuickJumpController => {
   let session: Session | undefined;
   let disposed = false;
+  let pendingTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const stopTimer = (): void => {
+    if (pendingTimer !== undefined) {
+      clearTimeout(pendingTimer);
+      pendingTimer = undefined;
+    }
+  };
 
   const setActiveContext = async (active: boolean): Promise<void> => {
     await vscode.commands.executeCommand('setContext', ACTIVE_CONTEXT, active);
@@ -54,10 +65,21 @@ export const createQuickJumpController = (
     }
 
     if (session.phase === 'search') {
-      if (session.searchInput.length === 0) {
-        statusBar.show(`QuickJump: Type ${session.searchLength} ${session.searchLength === 1 ? 'character' : 'characters'}`);
+      if (session.mode.kind === 'timer') {
+        if (session.searchInput.length === 0) {
+          statusBar.show('QuickJump: Type search text');
+        } else {
+          const config = readConfig();
+          const count = collectCandidates(session.searchInput, {
+            mode: config.matchMode,
+            caseSensitive: config.caseSensitive,
+          }).candidates.length;
+          statusBar.show(`QuickJump: ${session.searchInput} (${count} matches)`);
+        }
+      } else if (session.searchInput.length === 0) {
+        statusBar.show(`QuickJump: Type ${session.mode.length} ${session.mode.length === 1 ? 'character' : 'characters'}`);
       } else {
-        statusBar.show(`QuickJump: Search ${codePoints(session.searchInput).length}/${session.searchLength}`);
+        statusBar.show(`QuickJump: Search ${codePoints(session.searchInput).length}/${session.mode.length}`);
       }
       return;
     }
@@ -71,6 +93,7 @@ export const createQuickJumpController = (
   };
 
   const finish = async (): Promise<void> => {
+    stopTimer();
     session = undefined;
     renderer.clear();
     statusBar.hide();
@@ -90,6 +113,10 @@ export const createQuickJumpController = (
   };
 
   const resolveSearch = async (current: Extract<Session, { phase: 'search' }>): Promise<void> => {
+    if (session !== current || current.searchInput.length === 0) {
+      return;
+    }
+    stopTimer();
     const config = readConfig();
     const snapshot = collectCandidates(current.searchInput, {
       mode: config.matchMode,
@@ -114,13 +141,34 @@ export const createQuickJumpController = (
     const hints = assignHints(snapshot.candidates, alphabet);
     session = {
       phase: 'hint',
-      searchLength: current.searchLength,
+      mode: current.mode,
       searchInput: current.searchInput,
       hintInput: '',
       editors: snapshot.editors,
       hints,
     };
     renderHintSession(session);
+  };
+
+  const resetTimer = (current: Extract<Session, { phase: 'search' }>): void => {
+    stopTimer();
+    if (current.mode.kind !== 'timer' || current.searchInput.length === 0) {
+      return;
+    }
+
+    pendingTimer = setTimeout(() => {
+      pendingTimer = undefined;
+      if (session === current) {
+        void resolveSearch(current);
+      }
+    }, readConfig().timerDelayMs);
+  };
+
+  const confirm = async (): Promise<void> => {
+    const current = session;
+    if (current?.phase === 'search' && current.mode.kind === 'timer') {
+      await resolveSearch(current);
+    }
   };
 
   const inputOne = async (character: string): Promise<void> => {
@@ -131,11 +179,14 @@ export const createQuickJumpController = (
 
     if (current.phase === 'search') {
       const searchInput = current.searchInput + character;
-      const next: Session = { ...current, searchInput };
+      const next: Extract<Session, { phase: 'search' }> = { ...current, searchInput };
       session = next;
 
-      if (codePoints(searchInput).length >= current.searchLength) {
-        await resolveSearch(next as Extract<Session, { phase: 'search' }>);
+      if (next.mode.kind === 'timer') {
+        resetTimer(next);
+        updateStatus();
+      } else if (codePoints(searchInput).length >= next.mode.length) {
+        await resolveSearch(next);
       } else {
         updateStatus();
       }
@@ -186,7 +237,12 @@ export const createQuickJumpController = (
 
     if (current.phase === 'search') {
       const characters = codePoints(current.searchInput);
-      session = { ...current, searchInput: characters.slice(0, -1).join('') };
+      const next: Extract<Session, { phase: 'search' }> = {
+        ...current,
+        searchInput: characters.slice(0, -1).join(''),
+      };
+      session = next;
+      resetTimer(next);
       updateStatus();
       return;
     }
@@ -200,15 +256,17 @@ export const createQuickJumpController = (
 
     const searchCharacters = codePoints(current.searchInput);
     renderer.clear();
-    session = {
+    const next: Extract<Session, { phase: 'search' }> = {
       phase: 'search',
-      searchLength: current.searchLength,
+      mode: current.mode,
       searchInput: searchCharacters.slice(0, -1).join(''),
     };
+    session = next;
+    resetTimer(next);
     updateStatus();
   };
 
-  const start = async (searchLength: SearchLength): Promise<void> => {
+  const startSearch = async (mode: SearchMode): Promise<void> => {
     if (disposed) {
       return;
     }
@@ -217,19 +275,22 @@ export const createQuickJumpController = (
       await finish();
     }
 
-    session = { phase: 'search', searchLength, searchInput: '' };
+    session = { phase: 'search', mode, searchInput: '' };
     updateStatus();
     await setActiveContext(true);
   };
 
   return {
-    start,
+    start: (length) => startSearch({ kind: 'fixed', length }),
+    startTimer: () => startSearch({ kind: 'timer' }),
+    confirm,
     input,
     backspace,
     cancel,
     isActive: () => session !== undefined,
     dispose: () => {
       disposed = true;
+      stopTimer();
       session = undefined;
       renderer.clear();
       statusBar.hide();

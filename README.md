@@ -6,7 +6,7 @@ QuickJump is a small, keyboard-driven VS Code extension for jumping directly to 
 
 ## Features
 
-- One-character and two-character jump commands.
+- One-character, two-character, and timer-based jump commands.
 - Searches all currently visible editors and their vertically visible lines.
 - `wordStart` matching by default, with optional `anywhere` matching.
 - Configurable hint alphabet and deterministic hint priority.
@@ -23,13 +23,14 @@ QuickJump provides two commands:
 | --- | --- |
 | **QuickJump: Jump by 1 Character** | `Ctrl+;` |
 | **QuickJump: Jump by 2 Characters** | `Ctrl+Alt+;` |
+| **QuickJump: Jump with Timer** | `Ctrl+Shift+;` |
 
 1. Run one of the commands.
 2. Type the search character or characters.
 3. If multiple matches exist, type the hint shown at the destination.
 4. QuickJump focuses the target editor and moves the cursor.
 
-If exactly one match exists, QuickJump jumps immediately. If no matches exist, the session exits silently.
+For one- and two-character commands, a single match jumps immediately and zero matches exit silently. In timer mode, the search finishes after the configured idle time or when you press `Enter`.
 
 Default keybindings are ordinary VS Code keybindings and can be replaced in Keyboard Shortcuts or `keybindings.json`.
 
@@ -47,6 +48,27 @@ object.method   -> o, m
 ```
 
 The alternative `anywhere` mode matches every occurrence of the entered search text.
+
+### Timer Search
+
+Use **Jump with Timer** to search with any number of characters:
+
+1. Press `Ctrl+Shift+;` and type your search text.
+2. Each character refreshes the countdown. The status bar shows the current query and number of matching positions in visible lines.
+3. Pause for `quickJump.timerDelay` seconds (0.5 by default), or press `Enter` to finish the search immediately.
+4. Select a hint, or jump automatically if only one candidate remains.
+
+`Backspace` removes the last character; `Esc` cancels. Once hints appear, typing selects a hint instead of extending the search. Timer mode uses the same `quickJump.matchMode` setting, so choose `anywhere` for matches inside words.
+
+Example `settings.json`:
+
+```json
+{
+  "quickJump.matchMode": "anywhere",
+  "quickJump.timerDelay": 0.5
+}
+```
+
 
 Matching is case-insensitive by default.
 
@@ -126,6 +148,7 @@ Customize them through normal VS Code color customization:
 | --- | --- | --- |
 | `quickJump.matchMode` | `wordStart` | `wordStart`, `anywhere` |
 | `quickJump.caseSensitive` | `false` | `true`, `false` |
+| `quickJump.timerDelay` | `0.5` | seconds, `0.1` to `10` |
 | `quickJump.hintCharacters` | `asdfghjkl` | string |
 | `quickJump.revealMode` | `keep` | `keep`, `position` |
 | `quickJump.revealPosition` | `25` | number from `0` to `100` |
@@ -133,7 +156,7 @@ Customize them through normal VS Code color customization:
 ## Cancellation
 
 - `Esc` cancels QuickJump immediately.
-- `Backspace` removes the latest hint input, or returns from hint selection to search input.
+- `Backspace` removes the latest search or hint input, or returns from hint selection to search input.
 - Editor selection, viewport, document, visible-editor, or focus changes that invalidate the current candidates cancel the active session.
 - Normal cancellation and zero-match results do not show notifications.
 
@@ -160,7 +183,7 @@ From the repository root:
 ```sh
 npm install
 npm run package
-code --install-extension quickjump-1.0.0.vsix
+code --install-extension quickjump-1.1.0.vsix
 ```
 
 `npm run package` runs compile/test checks and then creates the VSIX file.

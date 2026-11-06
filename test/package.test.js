@@ -51,7 +51,7 @@ test('reveal position settings support a 0 to 100 percentage', () => {
 
 test('manifest is ready for local VSIX packaging', () => {
   assert.equal(manifest.publisher, 'takashit16833');
-  assert.equal(manifest.version, '1.0.0');
+  assert.equal(manifest.version, '1.1.0');
   assert.match(manifest.scripts.package, /npm run check/);
   assert.match(manifest.scripts.package, /vsce package/);
   assert.equal(manifest.devDependencies['@vscode/vsce'], '^3.9.2');
@@ -68,4 +68,19 @@ test('manifest includes Marketplace presentation and support metadata', () => {
   assert.equal(manifest.homepage, 'https://github.com/takashit16833/QuickJump#readme');
   assert.equal(manifest.bugs.url, 'https://github.com/takashit16833/QuickJump/issues');
   assert.equal(manifest.repository.url, 'https://github.com/takashit16833/QuickJump.git');
+});
+
+
+test('timer command has a default shortcut and Enter confirmation', () => {
+  const commands = new Set(manifest.contributes.commands.map(({ command }) => command));
+  assert.equal(commands.has('quickJump.jumpWithTimer'), true);
+  const byCommand = (command) => manifest.contributes.keybindings.find((binding) => binding.command === command);
+  assert.equal(byCommand('quickJump.jumpWithTimer').key, 'ctrl+shift+;');
+  assert.match(byCommand('quickJump.jumpWithTimer').when, /!quickJump\\.active/);
+  assert.equal(byCommand('quickJump.confirm').key, 'enter');
+  assert.match(byCommand('quickJump.confirm').when, /quickJump\\.active/);
+  const timerDelay = manifest.contributes.configuration.properties['quickJump.timerDelay'];
+  assert.equal(timerDelay.default, 0.5);
+  assert.equal(timerDelay.minimum, 0.1);
+  assert.equal(timerDelay.maximum, 10);
 });

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { normalizeRevealPosition } from '../core/reveal';
+import { normalizeTimerDelaySeconds } from '../core/timer';
 import type { MatchMode, RevealMode, RevealOptions } from '../core/types';
 
 export const DEFAULT_HINT_CHARACTERS = 'asdfghjkl';
@@ -9,6 +10,7 @@ export interface QuickJumpConfig {
   readonly matchMode: MatchMode;
   readonly caseSensitive: boolean;
   readonly hintCharacters: string;
+  readonly timerDelayMs: number;
   readonly reveal: RevealOptions;
 }
 
@@ -18,6 +20,7 @@ export const readConfig = (): QuickJumpConfig => {
     matchMode: config.get<MatchMode>('matchMode', 'wordStart'),
     caseSensitive: config.get<boolean>('caseSensitive', false),
     hintCharacters: config.get<string>('hintCharacters', DEFAULT_HINT_CHARACTERS),
+    timerDelayMs: Math.round(normalizeTimerDelaySeconds(config.get<number>('timerDelay', 0.5)) * 1000),
     reveal: {
       mode: config.get<RevealMode>('revealMode', 'keep'),
       position: normalizeRevealPosition(config.get<number>('revealPosition', 25)),
