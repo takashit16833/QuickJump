@@ -1,228 +1,93 @@
 # QuickJump
 
-**Jump to what you can already see.**
+QuickJump は、**画面に表示されている文字へ、キーボードだけでカーソルを移動する** VS Code 拡張機能です。
 
-QuickJump is a small, keyboard-driven VS Code extension for jumping directly to visible text. Type one or two search characters, choose a hint, and the cursor moves there immediately — even across visible editor groups.
+検索文字を入力すると移動候補に目印が表示されるので、目的の目印を入力して移動します。分割表示している別のエディタにも移動できます。
 
-## Features
+## 使い方
 
-- One-character, two-character, and timer-based jump commands.
-- Searches all currently visible editors and their vertically visible lines.
-- `wordStart` matching by default, with optional `anywhere` matching.
-- Configurable hint alphabet and deterministic hint priority.
-- Immediate jump when only one candidate exists.
-- Configurable reveal position from `0` to `100`.
-- Theme-customizable hint foreground and background colors.
-- Designed to coexist with VSCodeVim without overriding VS Code's global `type` command.
+| 検索方法 | 既定のキー | 動作 |
+| --- | --- | --- |
+| 1文字検索 | `Ctrl+;` | 1文字入力して候補を表示 |
+| 2文字検索 | `Ctrl+Alt+;` | 2文字入力して候補を表示 |
+| タイマー検索 | `Ctrl+Shift+;` | 好きな長さの文字列で検索 |
 
-## Quick Start
+1. テキストエディタにカーソルを置き、上記のキーで検索を開始します。
+2. 移動したい場所の文字を入力します。
+3. 候補が複数ある場合は、その場所に表示された目印の文字を入力します。
+4. カーソルが目的の位置へ移動します。候補が1つだけなら、自動で移動します。
 
-QuickJump provides two commands:
+候補がない場合は、そのまま終了します。検索は現在表示されているエディタの行が対象で、ファイル全体やプロジェクト全体は検索しません。
 
-| Command | Default key |
-| --- | --- |
-| **QuickJump: Jump by 1 Character** | `Ctrl+;` |
-| **QuickJump: Jump by 2 Characters** | `Ctrl+Alt+;` |
-| **QuickJump: Jump with Timer** | `Ctrl+Shift+;` |
+### タイマー検索
 
-1. Run one of the commands.
-2. Type the search character or characters.
-3. If multiple matches exist, type the hint shown at the destination.
-4. QuickJump focuses the target editor and moves the cursor.
+タイマー検索では、文字数を決めずに検索できます。
 
-For one- and two-character commands, a single match jumps immediately and zero matches exit silently. In timer mode, the search finishes after the configured idle time or when you press `Enter`.
+1. `Ctrl+Shift+;` で開始し、検索したい文字列を入力します。
+2. **最後の入力から0.5秒**（既定値）経つと検索を確定し、候補の目印を表示します。
+3. 目印を入力して移動します。`Enter` を押すと待たずに確定できます。
 
-Default keybindings are ordinary VS Code keybindings and can be replaced in Keyboard Shortcuts or `keybindings.json`.
+文字を追加するたびに待ち時間がリセットされます。入力中は、現在の検索文字列と一致件数がステータスバーに表示されます。待ち時間は `quickJump.timerDelay` で変更できます。
 
-## Matching
+### 入力の取り消し
 
-The default mode is `wordStart`.
+- `Esc`：検索を中止します。
+- `Backspace`：入力した検索文字や目印を1文字戻します。目印の入力前まで戻すと、検索文字の入力に戻れます。
 
-It treats the start of a word or identifier as a candidate without splitting camelCase, PascalCase, or snake_case internally:
+## 検索範囲と一致条件
 
-```text
-getUserName     -> g
-foo_bar         -> f
-some-value      -> s, v
-object.method   -> o, m
-```
+既定では**単語の先頭**だけが候補になります。単語の途中も対象にしたい場合は、`quickJump.matchMode` を `anywhere` に変更してください。
 
-The alternative `anywhere` mode matches every occurrence of the entered search text.
+例えば `getUserName` の `U` や `N` などにも移動したい場合は、`anywhere` が便利です。大文字と小文字は既定では区別しません。
 
-### Timer Search
+複数のエディタを分割表示している場合も検索できます。ただし対象は**表示中の行**のみです。横スクロールで隠れている文字が候補に含まれる場合があります。
 
-Use **Jump with Timer** to search with any number of characters:
+通常のテキストエディタ向けの機能です。VS Code 内蔵のリッチ Markdown Editor や Markdown Preview では使用できません。
 
-1. Press `Ctrl+Shift+;` and type your search text.
-2. Each character refreshes the countdown. The status bar shows the current query and number of matching positions in visible lines.
-3. Pause for `quickJump.timerDelay` seconds (0.5 by default), or press `Enter` to finish the search immediately.
-4. Select a hint, or jump automatically if only one candidate remains.
+## 設定
 
-`Backspace` removes the last character; `Esc` cancels. Once hints appear, typing selects a hint instead of extending the search. Timer mode uses the same `quickJump.matchMode` setting, so choose `anywhere` for matches inside words.
-
-Example `settings.json`:
+VS Code の `settings.json` に記述します。例えば、単語の途中も検索し、タイマーの待ち時間を0.7秒にする場合は次のように設定します。
 
 ```json
 {
   "quickJump.matchMode": "anywhere",
-  "quickJump.timerDelay": 0.5
+  "quickJump.timerDelay": 0.7
 }
 ```
 
-
-Matching is case-insensitive by default.
-
-## Hints
-
-The default hint characters are:
-
-```text
-asdfghjkl
-```
-
-Change `quickJump.hintCharacters` to use a different keyboard layout or preferred order.
-
-QuickJump assigns hints in this order:
-
-1. candidates in the active editor;
-2. candidates nearest to the active cursor;
-3. candidates in other visible editors in deterministic group order.
-
-All hints in a session have the same width, so no hint can be a prefix of another. With nine hint characters:
-
-- up to 9 candidates use one-character hints;
-- up to 81 candidates use two-character hints;
-- up to 729 candidates use three-character hints.
-
-As a hint is typed, non-matching candidates disappear. Invalid hint input is ignored.
-
-## Reveal Position
-
-`quickJump.revealMode` controls what happens to the viewport after a jump:
-
-- `keep` — keep the current viewport when possible. This is the default.
-- `position` — place the destination near the percentage configured by `quickJump.revealPosition`.
-
-`quickJump.revealPosition` accepts any number from `0` to `100`:
-
-```text
-0   -> near top
-25  -> near upper quarter
-50  -> near center
-75  -> near lower quarter
-100 -> near bottom
-```
-
-Example:
-
-```json
-{
-  "quickJump.revealMode": "position",
-  "quickJump.revealPosition": 25
-}
-```
-
-The position is intentionally approximate. Folding, line wrapping, Sticky Scroll, and document boundaries can affect where a source line is displayed.
-
-## Hint Colors
-
-QuickJump contributes two theme colors:
-
-- `quickJump.hintBackground`
-- `quickJump.hintForeground`
-
-Customize them through normal VS Code color customization:
-
-```json
-{
-  "workbench.colorCustomizations": {
-    "quickJump.hintBackground": "#FFD700",
-    "quickJump.hintForeground": "#0E1117"
-  }
-}
-```
-
-## Settings
-
-| Setting | Default | Values |
+| 設定 | 既定値 | 説明 |
 | --- | --- | --- |
-| `quickJump.matchMode` | `wordStart` | `wordStart`, `anywhere` |
-| `quickJump.caseSensitive` | `false` | `true`, `false` |
-| `quickJump.timerDelay` | `0.5` | seconds, `0.1` to `10` |
-| `quickJump.hintCharacters` | `asdfghjkl` | string |
-| `quickJump.revealMode` | `keep` | `keep`, `position` |
-| `quickJump.revealPosition` | `25` | number from `0` to `100` |
+| `quickJump.matchMode` | `wordStart` | `wordStart` は単語先頭、`anywhere` は途中も一致 |
+| `quickJump.timerDelay` | `0.5` | タイマー検索の待ち時間（秒）。0.1〜10 |
+| `quickJump.caseSensitive` | `false` | `true` で大文字・小文字を区別 |
+| `quickJump.hintCharacters` | `asdfghjkl` | 移動先の目印に使う文字 |
+| `quickJump.revealMode` | `keep` | `keep` は表示位置をできるだけ維持、`position` は位置を指定 |
+| `quickJump.revealPosition` | `25` | `position` のときの表示位置（0が上、50が中央、100が下） |
 
-## Cancellation
+目印の色は `workbench.colorCustomizations` の `quickJump.hintBackground`（背景色）と `quickJump.hintForeground`（文字色）で変更できます。
 
-- `Esc` cancels QuickJump immediately.
-- `Backspace` removes the latest search or hint input, or returns from hint selection to search input.
-- Editor selection, viewport, document, visible-editor, or focus changes that invalidate the current candidates cancel the active session.
-- Normal cancellation and zero-match results do not show notifications.
+キーの割り当ては VS Code のキーボードショートカット画面、または `keybindings.json` から変更できます。
 
-## Known Limitation
+## インストール
 
-VS Code exposes visible ranges vertically, not horizontally. QuickJump therefore guarantees that candidates are on currently visible **lines**, but it cannot determine whether a character on a very long line is clipped by horizontal scrolling.
+### VS Code の拡張機能画面から
 
-## Installation
+拡張機能画面で **QuickJump - Visible Text Navigation** を検索してインストールします。拡張機能 ID は `takashit16833.quickjump` です。
 
-### Visual Studio Marketplace
+### このリポジトリから
 
-Install **QuickJump - Visible Text Navigation** from the VS Code Marketplace.
-
-The extension identifier is:
-
-```text
-takashit16833.quickjump
-```
-
-### Local VSIX
-
-From the repository root:
+リポジトリのルートで次を実行すると、VSIX ファイルを作成してインストールできます。
 
 ```sh
 npm install
 npm run package
-code --install-extension quickjump-1.1.0.vsix
+code --install-extension --force quickjump-1.1.0.vsix
 ```
 
-`npm run package` runs compile/test checks and then creates the VSIX file.
+VS Code の「拡張機能」→「…」→「VSIX からのインストール」からも導入できます。
 
-You can also use **Extensions → ... → Install from VSIX...** in VS Code.
+## 不具合・要望
 
-## Support
+[GitHub Issues](https://github.com/takashit16833/QuickJump/issues) に登録してください。
 
-Bug reports and feature requests are welcome in GitHub Issues:
-
-https://github.com/takashit16833/QuickJump/issues
-
-See [SUPPORT.md](./SUPPORT.md) for the information that is useful when reporting a problem.
-
-## Development
-
-Requirements:
-
-- Node.js 22 or later
-- npm
-- VS Code
-
-Install dependencies and run all checks:
-
-```sh
-npm install
-npm run check
-```
-
-Press `F5` in VS Code to launch an Extension Development Host.
-
-To build an installable VSIX:
-
-```sh
-npm run package
-```
-
-See [AGENTS.md](./AGENTS.md) for architecture, implementation rules, design constraints, and the manual verification matrix.
-
-## License
-
-QuickJump is released under the [MIT License](./LICENSE).
+ライセンス：[MIT](LICENSE)
