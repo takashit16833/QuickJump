@@ -20,7 +20,7 @@ A session follows this model:
 
 ```text
 start command
-  -> collect 1 or 2 search characters
+  -> collect 1 or 2 search characters, or a variable-length timer search
   -> find candidates in visible editors / visible lines
   -> zero candidates: exit silently
   -> one candidate: jump immediately
@@ -35,7 +35,7 @@ Status-bar text is user-facing and must be English.
 
 ## Scope
 
-### v1.0 includes
+### v1.1 includes
 
 - all `vscode.window.visibleTextEditors`;
 - only vertically visible ranges of each editor;
@@ -53,7 +53,7 @@ Status-bar text is user-facing and must be English.
 - timer search default delay of 0.5 seconds, configurable from 0.1 to 10 seconds;
 - cancellation when the editor context changes in a way that invalidates candidates.
 
-### Explicit non-goals for v1.0
+### Explicit non-goals for v1.1
 
 - searching hidden parts of a document;
 - project-wide search;
@@ -140,7 +140,7 @@ When case sensitivity is disabled, normalize only for comparison. Preserve the o
 
 Ordering is part of UX, not an incidental implementation detail.
 
-v1.0 ordering:
+Ordering:
 
 1. active editor before other visible editors;
 2. within the active editor, nearest candidates to its current cursor first;
@@ -236,6 +236,7 @@ src/
     hints.ts            # pure hint generation/filtering
     order.ts            # pure candidate ordering
     reveal.ts           # pure reveal-position calculation
+    timer.ts            # pure timer-delay normalization
     types.ts            # domain types
   vscode/
     candidates.ts       # visible editor/range -> domain candidates
@@ -267,7 +268,7 @@ VS Code state -> plain data -> pure transformation -> VS Code adapter applies ef
 
 ## Configuration
 
-v1.0 settings:
+Settings:
 
 - `quickJump.matchMode`: `wordStart` | `anywhere`, default `wordStart`;
 - `quickJump.caseSensitive`: boolean, default `false`;
